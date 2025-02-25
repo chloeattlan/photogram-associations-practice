@@ -48,17 +48,19 @@ class User < ApplicationRecord
   ## Indirect associations
 
   # User#liked_photos: returns rows from the photos table associated to this user through its likes
-  has_many(:liked_photos, class_name: "Photo", through: :likes, source: :fan)
+  has_many(:liked_photos, class_name: "Photo", through: :likes, source: :photo)
   # User#commented_photos: returns rows from the photos table associated to this user through its comments
   has_many(:commented_photos, class_name: "Photo", through: :comments, source: :photo)
 
   ### Indirect associations built on scoped associations
 
   # User#followers: returns rows from the users table associated to this user through its accepted_received_follow_requests (the follow requests' senders)
-
+  has_many(:followers, class_name: "User", through: :accepted_received_follow_requests, source: :sender)
   # User#leaders: returns rows from the users table associated to this user through its accepted_sent_follow_requests (the follow requests' recipients)
-
+  has_many(:leaders, class_name: "User", through: :accepted_sent_follow_requests, source: :recipient)
   # User#feed: returns rows from the photos table associated to this user through its leaders (the leaders' own_photos)
+  has_many(:feed, class_name: "Photo", through: :leaders, source: :own_photos)
 
   # User#discover: returns rows from the photos table associated to this user through its leaders (the leaders' liked_photos)
+  has_many(:discover, class_name: "Photo", through: :leaders, source: :liked_photos)
 end
